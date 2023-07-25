@@ -1,7 +1,7 @@
 use std::env;
 
-pub fn validate_env(env_var: &str, display_name: &str) {
+pub fn check_env_var_exists(env_var: &str) {
     if env::var(env_var).is_err() {
-        panic!("{} is not set", display_name);
+        panic!("Missing environment variable {env_var}.");
     }
 }

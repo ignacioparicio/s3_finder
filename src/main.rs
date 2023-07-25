@@ -1,7 +1,7 @@
 use clap::Parser;
 mod fs_utils;
 mod s3_utils;
-use fs_utils::validate_env;
+use fs_utils::check_env_var_exists;
 use s3_utils::list_buckets;
 
 /// CLI tool to search for S3 keys with a specific filename and string within the file
@@ -40,8 +40,8 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    validate_env(&args.access_key_id_env_param, "Access Key ID");
-    validate_env(&args.secret_access_key_env_param, "Secret Access Key");
+    check_env_var_exists(&args.access_key_id_env_param);
+    check_env_var_exists(&args.secret_access_key_env_param);
 
     list_buckets(&args.endpoint, &args.bucket).unwrap();
     // let rt = tokio::runtime::Runtime::new().unwrap();
