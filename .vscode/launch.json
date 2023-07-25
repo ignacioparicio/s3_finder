@@ -1,0 +1,45 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 's3-finder'",
+      "cargo": {
+        "args": ["build", "--bin=s3-finder", "--package=s3-finder"],
+        "filter": {
+          "name": "s3-finder",
+          "kind": "bin"
+        }
+      },
+      "args": [
+        "--filename",
+        "my_filename.txt",
+        "--search-string",
+        "my_search_param",
+        "--endpoint",
+        "https://my_endpoint.com",
+        "--bucket",
+        "my-bucket"
+      ],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in executable 's3-finder'",
+      "cargo": {
+        "args": ["test", "--no-run", "--bin=s3-finder", "--package=s3-finder"],
+        "filter": {
+          "name": "s3-finder",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
