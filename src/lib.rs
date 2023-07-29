@@ -1,5 +1,5 @@
 #![allow(clippy::result_large_err)]
-use aws_sdk_s3::Client;
+use aws_sdk_s3::{Client, Error};
 use std::env;
 use std::{fs::File, io::Write};
 use tokio_stream::StreamExt;
@@ -35,4 +35,30 @@ pub async fn get_object(
     }
 
     Ok(byte_count)
+}
+
+pub async fn list_s3_keys(
+    client: &Client,
+    bucket: &str,
+    prefix: Option<&str>,
+) -> Result<(), Error> {
+    let mut list_objects_request = client.list_objects_v2().bucket(bucket);
+
+    if let Some(prefix) = prefix {
+        list_objects_request = list_objects_request.prefix(prefix);
+    }
+
+    let resp = list_objects_request.send().await?;
+
+    for object in resp.contents().unwrap_or_default() {
+        println!("{}", object.key().unwrap_or_default());
+    }
+
+    Ok(())
+}
+
+pub async fn test_access_to_bucket(client: &Client, bucket: &str) {
+    list_s3_keys(client, bucket, None)
+        .await
+        .expect(&format!("No access to bucket {}", bucket));
 }
