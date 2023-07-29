@@ -1,12 +1,8 @@
 use clap::Parser;
-mod fs_utils;
-mod s3_utils;
-use fs_utils::check_env_var_exists;
-use s3_utils::list_buckets;
-
+use s3_finder::{build_s3_client, check_env_var_exists, get_object};
 /// CLI tool to search for S3 keys with a specific filename and string within the file
 #[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
+#[command(author, version="1.0.0", about, long_about = None)]
 struct Args {
     /// Name of the file to search for
     #[arg(short, long)]
@@ -37,13 +33,17 @@ struct Args {
     secret_access_key_env_param: String,
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let args = Args::parse();
 
     check_env_var_exists(&args.access_key_id_env_param);
     check_env_var_exists(&args.secret_access_key_env_param);
 
-    list_buckets(&args.endpoint, &args.bucket).unwrap();
+    let client = build_s3_client(&args.endpoint).await.unwrap();
+    get_object(&client, &args.bucket, "my-key").await.unwrap();
+
+    // list_buckets(&args.endpoint, &args.bucket).await.unwrap();
     // let rt = tokio::runtime::Runtime::new().unwrap();
     // rt.block_on(async {
     //     list_buckets(&args.endpoint).await.unwrap();
