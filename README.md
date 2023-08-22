@@ -5,9 +5,8 @@
 
 # TODO:
 
-- Check connection
-- Iterate through objects in bucket
-- Iterate through objects in bucket with prefix
-- tqdm equivalent
-- Consider only filename passed by user
-- Search in relevant key
+- Search in relevant keys
+- Replace expect() with proper error handling
+- Checks:
+  - warning if search_string is passed but regex isn't
+  - warning if max_hits is passed by regex isn't
