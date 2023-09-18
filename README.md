@@ -5,8 +5,8 @@
 
 # TODO:
 
-- Search in relevant keys
+- try to stream outputs to output.txt instead of just at the end
 - Replace expect() with proper error handling
 - Checks:
-  - warning if search_string is passed but regex isn't
-  - warning if max_hits is passed by regex isn't
+  - warning if neither key_regex nor content_regex is passed
+  - warning if content_regex is passed but key_regex isn't

@@ -13,4 +13,6 @@ clap = { version = "4.3.19", features = ["derive"] }
 tokio-stream = "0.1.14"
 anyhow = "1.0.72"
 regex = "1.9.3"
+bytes = "1.5.0"
+chrono = "0.4.31"
 
