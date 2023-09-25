@@ -53,8 +53,13 @@ struct Args {
 async fn main() {
     let args = Args::parse();
 
-    check_env_var_exists(&args.access_key_id_env_param);
-    check_env_var_exists(&args.secret_access_key_env_param);
+    if args.content_regex.is_some() && args.key_regex.is_none() {
+        eprintln!("Warning: --content-regex is specified without --key-regex. This may lead to scanning content in binary files, negatively impacting performance. Consider using --key-regex to refine file selection.");
+    }
+
+    if args.content_regex.is_none() && args.key_regex.is_none() {
+        eprintln!("Warning: Neither --key-regex nor --content-regex is specified. This will list all keys in the specified bucket/prefix combination.");
+    }
 
     let client = build_s3_client(
         &args.endpoint,
