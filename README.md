@@ -1,6 +1,8 @@
 # About
 
-S3 Finder is a command-line interface (CLI) tool designed to search for Amazon S3 keys which match a specified regex and optionally contain another regex. It provides a range of options allowing for flexible and efficient searching within an S3 bucket.
+S3 Finder is a command-line interface (CLI) tool designed to search for S3 keys which match a specified regex and optionally contain another regex.
+
+Can be used with AWS S3 or with S3-like services.
 
 ## Features
 
