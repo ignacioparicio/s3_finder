@@ -1,23 +1,40 @@
 #![allow(clippy::result_large_err)]
-// use aws_sdk_s3::error::SdkError;
-// use aws_sdk_s3::operation::get_object::{GetObjectError, GetObjectOutput};
+use aws_sdk_s3::config::Credentials;
 use aws_sdk_s3::{Client, Error};
 use bytes::Bytes;
 use chrono::{DateTime, Local};
 use regex::Regex;
 use std::env;
+use std::process;
 use std::time::SystemTime;
-// use std::{fs::File, io::Write};
-// use tokio_stream::StreamExt;
 
-pub fn check_env_var_exists(env_var: &str) {
-    if env::var(env_var).is_err() {
-        panic!("Missing environment variable {env_var}.");
+fn get_env_var_or_exit(var_name: &str) -> String {
+    match env::var(var_name) {
+        Ok(value) => value,
+        Err(_) => {
+            eprintln!("Error: Environment variable {} must be set.", var_name);
+            process::exit(1);
+        }
     }
 }
 
-pub async fn build_s3_client(endpoint: &str) -> Client {
-    let config = aws_config::from_env().endpoint_url(endpoint).load().await;
+pub async fn build_s3_client(
+    endpoint: &str,
+    access_key_id_env: &str,
+    secret_access_key_env: &str,
+) -> Client {
+    let credentials = Credentials::new(
+        get_env_var_or_exit(access_key_id_env),
+        get_env_var_or_exit(secret_access_key_env),
+        None,
+        None,
+        "CustomProvider",
+    );
+    let config = aws_config::from_env()
+        .endpoint_url(endpoint)
+        .credentials_provider(credentials)
+        .load()
+        .await;
     Client::new(&config)
 }
 

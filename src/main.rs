@@ -1,5 +1,5 @@
 use clap::Parser;
-use s3_finder::{build_s3_client, check_env_var_exists, find_s3_keys, test_access_to_bucket};
+use s3_finder::{build_s3_client, find_s3_keys, test_access_to_bucket};
 /// CLI tool to search for S3 keys which match a regex and optionally contain a regex
 #[derive(Parser, Debug)]
 #[command(author, version="1.0.0", about, long_about = None)]
@@ -56,7 +56,12 @@ async fn main() {
     check_env_var_exists(&args.access_key_id_env_param);
     check_env_var_exists(&args.secret_access_key_env_param);
 
-    let client = build_s3_client(&args.endpoint).await;
+    let client = build_s3_client(
+        &args.endpoint,
+        &args.access_key_id_env_param,
+        &args.secret_access_key_env_param,
+    )
+    .await;
 
     test_access_to_bucket(&client, &args.endpoint, &args.bucket).await;
 
