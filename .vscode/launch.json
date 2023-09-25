@@ -16,14 +16,16 @@
         }
       },
       "args": [
-        "--filename",
-        "my_filename.txt",
-        "--search-string",
-        "my_search_param",
         "--endpoint",
         "https://my_endpoint.com",
         "--bucket",
-        "my-bucket"
+        "my-bucket",
+        "--key-regex",
+        "my-key-regex",
+        "--prefix",
+        "my-prefix",
+        "--content-regex",
+        "my-content-regex"
       ],
       "cwd": "${workspaceFolder}"
     },
