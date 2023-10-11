@@ -1,8 +1,8 @@
 # About
 
-S3 Finder is a command-line interface (CLI) tool designed to search for S3 keys which match a specified regex and optionally contain another regex.
+S3 Finder is a command-line interface (CLI) tool designed to search for S3 keys which match a specified regex and/or contain another regex.
 
-Can be used with AWS S3 or with S3-like services.
+It can be used with AWS S3 or with S3-like services.
 
 ## Features
 
@@ -11,6 +11,7 @@ Can be used with AWS S3 or with S3-like services.
 - **Prefix searching**: Optionally specify a prefix to narrow down the search within the S3 bucket.
 - **Logging**: Provides options for logging intervals and logging each hit in stderr.
 - **Early stopping**: Allows users to set a maximum number of keys to process and hits to find before stopping.
+- **Flexible error handling**: Offers options to tolerate errors when fetching a response or processing a single object. These errors are logged, but the process can continue, preventing single issues from disrupting larger operations.
 
 ## Usage
 
@@ -35,9 +36,13 @@ Options:
       --max-hits <MAX_HITS>
           Optional maximum number of hits to find before stopping
       --log-interval <LOG_INTERVAL>
-          Optional logging interval
+          Optional logging interval [default: 10000]
       --log-hits
           Whether to log each hit in stderr
+      --tolerate-response-error
+          Whether to continue execution if an error occurs processing a ListObjectsV2 response. Each ignored response can affect up to 1,000 objects
+      --tolerate-key-error
+          Whether to continue execution if an error occurs processing a single S3 key
       --access-key-id-env-param <ACCESS_KEY_ID_ENV_PARAM>
           Environment variable containing the S3 access key ID [default: AWS_ACCESS_KEY_ID]
       --secret-access-key-env-param <SECRET_ACCESS_KEY_ENV_PARAM>
@@ -77,4 +82,5 @@ s3_finder -e https://s3.custom-endpoint.de -b real-estate -k ".*\.(csv|json)$" -
 # TODO:
 
 - try to stream outputs to output.txt instead of just at the end
-- Replace expect() with proper error handling
+- log_hits also shows number of objects scanned
+- improve performance / identify inefficiencies?

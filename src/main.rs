@@ -33,12 +33,20 @@ struct Args {
     max_hits: Option<usize>,
 
     /// Optional logging interval
-    #[arg(long)]
-    log_interval: Option<usize>,
+    #[arg(long, default_value_t = 10000)]
+    log_interval: usize,
 
     /// Whether to log each hit in stderr
     #[arg(long, default_value_t = false)]
     log_hits: bool,
+
+    /// Whether to continue execution if an error occurs processing a ListObjectsV2 response. Each ignored response can affect up to 1,000 objects.
+    #[arg(long, default_value_t = true)]
+    tolerate_response_error: bool,
+
+    /// Whether to continue execution if an error occurs processing a single S3 key.
+    #[arg(long, default_value_t = true)]
+    tolerate_key_error: bool,
 
     /// Environment variable containing the S3 access key ID
     #[arg(long, default_value_t = String::from("AWS_ACCESS_KEY_ID"))]
@@ -68,7 +76,16 @@ async fn main() {
     )
     .await;
 
-    test_access_to_bucket(&client, &args.endpoint, &args.bucket).await;
+    match test_access_to_bucket(&client, &args.bucket).await {
+        Ok(_) => {}
+        Err(e) => {
+            eprintln!(
+                "Unable to access bucket {} at endpoint {}. Error: {}",
+                &args.bucket, &args.endpoint, e
+            );
+            std::process::exit(1);
+        }
+    }
 
     let result = find_s3_keys(
         &client,
@@ -78,8 +95,10 @@ async fn main() {
         args.content_regex.as_deref(),
         args.max_keys,
         args.max_hits,
-        args.log_interval.unwrap_or(100000),
+        args.log_interval,
         args.log_hits,
+        args.tolerate_response_error,
+        args.tolerate_key_error,
     )
     .await;
 
